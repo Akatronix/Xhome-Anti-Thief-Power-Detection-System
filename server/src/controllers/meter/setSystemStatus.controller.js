@@ -31,7 +31,7 @@ async function setSystemStatus(req, res) {
   try {
     const updatedMeter = await Meter.findOneAndUpdate(
       { hardwareID, UserId: userId },
-      { systemStatus },
+      { systemStatus:true },
       {
         returnDocument: "after",
       },
