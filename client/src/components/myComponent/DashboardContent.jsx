@@ -178,9 +178,8 @@ const DashboardContent = () => {
               <div
                 className={cn(
                   "w-3 h-3 rounded-full animate-pulse",
-                  safeHardwareData.systemStatus
-                    ? "bg-green-500"
-                    : "bg-gray-400",
+                   "bg-green-500"
+                  
                 )}
               />
               <span className="font-medium text-gray-700">
@@ -188,7 +187,7 @@ const DashboardContent = () => {
                 <span
                   className= "text-green-600"
                    >
-                 "Online" 
+                 Online
                 </span>
               </span>
               <span className="text-gray-300">|</span>
