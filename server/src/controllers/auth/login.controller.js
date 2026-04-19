@@ -32,7 +32,7 @@ async function loginHandler(req, res) {
     const accessToken = await generateToken(
       { userId: existingUser._id },
       process.env.JWT_ACCESS_SECRET,
-      "15m",
+      "1d",
     );
 
     const refreshToken = await generateToken(
