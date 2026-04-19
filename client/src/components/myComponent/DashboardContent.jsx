@@ -222,14 +222,14 @@ const DashboardContent = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* <ControlButton
+            <ControlButton
               active={safeHardwareData.systemStatus}
               onClick={() => handleToggleSystem()}
-              icon={safeHardwareData.systemStatus ? Power : Play}
-              label={safeHardwareData.systemStatus ? "ON" : "OFF"}
+              icon={TimerReset}
+              label={"RESET"}
               activeColor="bg-green-500 hover:bg-green-600"
-              inactiveColor="bg-gray-200"
-            /> */}
+              inactiveColor="bg-green-500 hover:bg-green-600"
+            /> 
             <ControlButton
               active={safeHardwareData.armed}
               onClick={() => handleToggleProtect()}
