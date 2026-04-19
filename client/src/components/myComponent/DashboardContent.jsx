@@ -125,7 +125,7 @@ const DashboardContent = () => {
       });
 
       if (response.status === 200) {
-        toast.success(`System turned ${newStatus ? "ON" : "OFF"} successfully`);
+        toast.success(`System reset successfully.`);
       } else {
         toast.error("Failed to toggle system status");
       }
