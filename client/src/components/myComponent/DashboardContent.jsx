@@ -72,7 +72,7 @@ const ControlButton = ({
       "flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200",
       active
         ? `${activeColor} text-white shadow-md`
-        : `${inactiveColor} text-gray-600 hover:bg-gray-100`,
+        : `${inactiveColor}  hover:bg-gray-100`,
     )}
   >
     <Icon className="w-5 h-5" />
@@ -186,13 +186,9 @@ const DashboardContent = () => {
               <span className="font-medium text-gray-700">
                 System Status:{" "}
                 <span
-                  className={
-                    safeHardwareData.systemStatus
-                      ? "text-green-600"
-                      : "text-gray-500"
-                  }
-                >
-                  {safeHardwareData.systemStatus ? "Online" : "Offline"}
+                  className= "text-green-600"
+                   >
+                 "Online" 
                 </span>
               </span>
               <span className="text-gray-300">|</span>
@@ -229,7 +225,7 @@ const DashboardContent = () => {
               icon={TimerReset}
               label={"RESET"}
               activeColor="bg-green-500 hover:bg-green-600"
-              inactiveColor="bg-green-500 hover:bg-green-600"
+              inactiveColor="bg-green-500 hover:bg-green-600 text-white"
             /> 
             <ControlButton
               active={safeHardwareData.armed}
