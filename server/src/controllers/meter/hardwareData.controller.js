@@ -99,13 +99,13 @@ async function hardwareData(req, res) {
     return res.status(400).json({ message: "Voltage, current, and power are required" });
   }
 
-  // 2. Prepare the Update Query
+  // 2. Prepare the Update
   const updateQuery = {
     $set: {
       voltage: Number(voltage),
       current: Number(current),
       power: Number(power),
-      systemStatus: false, // 🔹 This forces the status to false in the database
+      systemStatus: false, // Setting system to false as requested
     },
     $push: {
       chartData: {
@@ -134,8 +134,8 @@ async function hardwareData(req, res) {
   }
 
   try {
-    // 3. Update the database
-    // { new: false } returns the document as it was BEFORE systemStatus became false
+    // 3. Perform the Update
+    // { new: false } returns the document BEFORE the systemStatus was set to false
     const previousMeter = await Meter.findOneAndUpdate(
       { hardwareID },
       updateQuery,
@@ -146,12 +146,15 @@ async function hardwareData(req, res) {
       return res.status(404).json({ message: "Meter not found." });
     }
 
-    // 4. Send response
+    // 4. Send response in your exact requested format
     res.status(200).json({
-      message: "Data logged and systemStatus set to false",
-      previousSystemStatus: previousMeter.systemStatus, // Returns the OLD value (likely true)
-      currentSystemStatus: false,                       // Confirms the NEW value
-      thresholdPower: previousMeter.thresholdPower
+      message: "Meter data updated successfully",
+      previousSystemStatus: previousMeter.systemStatus, // The state before the change
+      updatedMeter: {
+        thresholdPower: previousMeter.thresholdPower,
+        armed: previousMeter.armed,
+        systemStatus: false, // We know it's false because we just updated it
+      },
     });
 
   } catch (error) {
