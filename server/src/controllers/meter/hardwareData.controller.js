@@ -99,48 +99,43 @@ async function hardwareData(req, res) {
     return res.status(400).json({ message: "Voltage, current, and power are required" });
   }
 
-  // 2. Prepare the Update Objects
-  const newChartDataEntry = {
-    timestamp: new Date(),
-    voltage: Number(voltage),
-    current: Number(current),
-    power: Number(power),
-  };
-
+  // 2. Prepare the Update Query
   const updateQuery = {
     $set: {
       voltage: Number(voltage),
       current: Number(current),
       power: Number(power),
-      // We assume systemStatus is updated elsewhere or remains as is
+      systemStatus: false, // 🔹 This forces the status to false in the database
     },
     $push: {
       chartData: {
-        $each: [newChartDataEntry],
-        $slice: -25, // Keep last 25 entries
+        $each: [{
+          timestamp: new Date(),
+          voltage: Number(voltage),
+          current: Number(current),
+          power: Number(power),
+        }],
+        $slice: -25,
         $sort: { timestamp: -1 },
       },
     },
   };
 
-  // Add history log if requested (e.g., if hardware detected a spike)
   if (history) {
-    const newHistoryEntry = {
-      timestamp: new Date(),
-      title: "Power Alert",
-      description: `Power exceeded threshold: ${power}W`,
-    };
-    if (!updateQuery.$push) updateQuery.$push = {}; // Ensure $push exists
     updateQuery.$push.history = {
-      $each: [newHistoryEntry],
+      $each: [{
+        timestamp: new Date(),
+        title: "Power Alert",
+        description: `System auto-disabled. Power was: ${power}W`,
+      }],
       $slice: -100,
       $sort: { timestamp: -1 },
     };
   }
 
   try {
-    // 3. The Database Operation
-    // Setting { new: false } returns the document as it was BEFORE the update
+    // 3. Update the database
+    // { new: false } returns the document as it was BEFORE systemStatus became false
     const previousMeter = await Meter.findOneAndUpdate(
       { hardwareID },
       updateQuery,
@@ -151,19 +146,12 @@ async function hardwareData(req, res) {
       return res.status(404).json({ message: "Meter not found." });
     }
 
-    // 4. Capture the "Previous" Value
-    // Example: If you need to know if the system was 'true' before this update
-    const oldStatus = previousMeter.systemStatus;
-
-    // 5. Send response with the previous values
+    // 4. Send response
     res.status(200).json({
-      message: "Meter data updated successfully",
-      previousState: {
-        systemStatus: oldStatus,
-        thresholdPower: previousMeter.thresholdPower,
-        armed: previousMeter.armed,
-        lastPowerRead: previousMeter.power // The value before this new update
-      }
+      message: "Data logged and systemStatus set to false",
+      previousSystemStatus: previousMeter.systemStatus, // Returns the OLD value (likely true)
+      currentSystemStatus: false,                       // Confirms the NEW value
+      thresholdPower: previousMeter.thresholdPower
     });
 
   } catch (error) {
@@ -172,6 +160,4 @@ async function hardwareData(req, res) {
   }
 }
 
-module.exports = {
-  hardwareData,
-};
+module.exports = { hardwareData };
