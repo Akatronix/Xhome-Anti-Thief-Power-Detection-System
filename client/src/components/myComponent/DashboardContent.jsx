@@ -16,6 +16,7 @@ import {
   ShieldOff,
   Play,
   Square,
+  TimerReset,
 } from "lucide-react";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { toast } from "sonner";
